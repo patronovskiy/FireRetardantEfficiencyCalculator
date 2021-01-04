@@ -1,0 +1,151 @@
+package service;
+
+import domain.TableEntity;
+import javafx.scene.chart.XYChart;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Date;
+
+//вспомогательный класс для работы с файлами Excel
+public class ReadingFileService {
+
+    //метод для чтения данных из файла и построения таблицы
+    //предполагем, что структура генерируемого файла всегда одна и та же:
+    //всегда используется первый лист книги Excel,
+    // заголовок - первая строка, в заголовке указаны date, time, номер канала в формате T1, T2...
+    //todo рефакторинг - очень длинный метод
+    public void getInformationFromFile(File file, XYChart chart, TableView tableView,
+                                       TextField testDateValue, TextField testNameValue,
+                                       int entityCounter, int channelsCounter)
+            throws IOException, InvalidFormatException {
+
+        //открываем книгу Excel
+        String fileAddress = file.getAbsolutePath();
+        OPCPackage pkg = OPCPackage.open(new File(fileAddress));
+        XSSFWorkbook workbook = new XSSFWorkbook(pkg);
+        //получаем первый лист книги
+        Sheet sheet = workbook.getSheetAt(0);
+
+        //определяем номера столбцов с нужной информацией
+        int dateTimeIndex = -1;
+        //максимальное число каналов - 8 (3 термопары на образце, 5  - в печи)
+        int t1Index = -1;
+        int t2Index = -1;
+        int t3Index = -1;
+        int t4Index = -1;
+        int t5Index = -1;
+        int t6Index = -1;
+        int t7Index = -1;
+        int t8Index = -1;
+
+        Row headerRow = sheet.getRow(0);
+        //TODO обработать NullPointerException если канала не существует
+        for (Cell cell : headerRow) {
+            if (cell.getStringCellValue().toLowerCase().contains("datetime")) {
+                dateTimeIndex = cell.getColumnIndex();
+            }
+            if (cell.getStringCellValue().toLowerCase().contains("value1")) {
+                t1Index = cell.getColumnIndex();
+                channelsCounter++;
+            }
+            if (cell.getStringCellValue().toLowerCase().contains("value2")) {
+                t2Index = cell.getColumnIndex();
+                channelsCounter++;
+            }
+            if (cell.getStringCellValue().toLowerCase().contains("value3")) {
+                t3Index = cell.getColumnIndex();
+                channelsCounter++;
+            }
+            if (cell.getStringCellValue().toLowerCase().contains("value4")) {
+                t4Index = cell.getColumnIndex();
+                channelsCounter++;
+            }
+            if (cell.getStringCellValue().toLowerCase().contains("value5")) {
+                t5Index = cell.getColumnIndex();
+                channelsCounter++;
+            }
+            if (cell.getStringCellValue().toLowerCase().contains("value6")) {
+                t6Index = cell.getColumnIndex();
+                channelsCounter++;
+            }
+            if (cell.getStringCellValue().toLowerCase().contains("value7")) {
+                t7Index = cell.getColumnIndex();
+                channelsCounter++;
+            }
+            if (cell.getStringCellValue().toLowerCase().contains("value8")) {
+                t8Index = cell.getColumnIndex();
+                channelsCounter++;
+            }
+        }
+
+        //извлекаем дату из файла и устанавливаем в окно с датой
+        Date date = new Date();
+        if (sheet.getRow(1).getCell(dateTimeIndex).getCellType() == CellType.NUMERIC) {
+            try {
+                date = sheet.getRow(1).getCell(dateTimeIndex).getDateCellValue();
+            } catch (Exception ex) {
+                System.out.println("Ошибка при извлечении даты");
+            }
+        }
+        testDateValue.setText(date.toString());
+
+        //извлекаем название опыта по умолчанию - по имени файла
+        int border = fileAddress.lastIndexOf("\\");
+        testNameValue.setText(fileAddress.substring(border+1, (fileAddress.length()-5)));
+
+        //добавляем в таблицу строки из файла для каждого канала
+        for (Row row : sheet) {
+            System.out.println(row.getRowNum());
+            if (row.getRowNum() >= 1 & row.getCell(dateTimeIndex) != null) {
+                TableEntity entityT1 = getTableEntityFromFile(row,"T1", dateTimeIndex, t1Index, entityCounter, date);
+                TableEntity entityT2 = getTableEntityFromFile(row, "T2", dateTimeIndex, t2Index, entityCounter, date);
+                TableEntity entityT3 = getTableEntityFromFile(row, "T3", dateTimeIndex, t3Index, entityCounter, date);
+                TableEntity entityT4 = getTableEntityFromFile(row, "T4", dateTimeIndex, t4Index, entityCounter, date);
+                TableEntity entityT5 = getTableEntityFromFile(row, "T5", dateTimeIndex, t5Index, entityCounter, date);
+                TableEntity entityT6 = getTableEntityFromFile(row, "T6", dateTimeIndex, t6Index, entityCounter, date);
+                TableEntity entityT7 = getTableEntityFromFile(row, "T7", dateTimeIndex, t7Index, entityCounter, date);
+                TableEntity entityT8 = getTableEntityFromFile(row, "T8", dateTimeIndex, t8Index, entityCounter, date);
+
+                addTableEntity(tableView, entityT1, entityT2, entityT3, entityT4, entityT5, entityT6, entityT7, entityT8);
+            }
+        }
+        workbook.close();
+    }
+
+    //метод для получения сущности строки из файла Excel
+    //принимает номер строки файла, имя канала, индексы колонок времени и канала
+    public TableEntity getTableEntityFromFile (Row row, String channelName, int timeIndex, int channelIndex, int entityCounter, Date initialMoment) {
+        //обязательно &&, иначе "падает" вторая проверка
+        if (channelIndex > 0 && row.getCell(channelIndex) != null) {
+            TableEntity tableEntity = new TableEntity(entityCounter,
+                    channelName,
+                    (row.getCell(timeIndex).getDateCellValue().getTime() - initialMoment.getTime())/60000,
+                    (Math.round(row.getCell(channelIndex).getNumericCellValue()*10))/10.0);
+            entityCounter++;
+            return tableEntity;
+        } else {
+            return null;
+        }
+    }
+
+    //метод для добавления полученных из файла excel данных в таблицу интерфейса
+    //добавляется каждая сущность строки TableEntity из списка строк
+    public void addTableEntity(TableView tableView, TableEntity ... tableEntities) {
+        for (TableEntity tableEntity : tableEntities) {
+            if (tableEntity != null) {
+                tableView.getItems().add(tableEntity);
+            }
+        }
+    }
+
+}
