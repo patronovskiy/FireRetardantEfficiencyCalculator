@@ -39,30 +39,21 @@
 }
 
 .chart-pane > .chart-wrapper {
-    /*-fx-background-color: pink;*/
     -fx-padding: 10px;
+    /*-fx-background-color: pink;*/
+
 }
 
 .owen-chart {
-    -fx-max-width: 1000px;
-    -fx-pref-height: 600px;
-}
-
-.chart-label {
-    -fx-pref-width: 200px;
-    -fx-font-weight: bold;
+    -fx-pref-width: 1000px;
+    -fx-pref-height: 880px;
 }
 
 .main-chart-label {
     -fx-pref-width: 1000px;
     -fx-font-size: 18px;
     -fx-alignment: center;
-    /*-fx-background-color: red;*/
-}
-
-.chart {
-    -fx-pref-width: 900px;
-    -fx-legend-side: right;
+    -fx-font-weight: bold;
 }
 
 .temp-table {
@@ -76,6 +67,18 @@
 
 .calculate-results-button {
     -fx-pref-width: 750px;
+}
+
+/*отметки на графике*/
+.chart-line-symbol {
+    -fx-background-radius: 0px;
+    -fx-padding: 0px;
+}
+
+/*отметки на легенде*/
+.chart-legend-item-symbol{
+    -fx-background-radius: 8px;
+    -fx-padding: 8px;
 }
 
 

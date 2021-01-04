@@ -107,14 +107,14 @@ public class ReadingFileService {
         for (Row row : sheet) {
             System.out.println(row.getRowNum());
             if (row.getRowNum() >= 1 & row.getCell(dateTimeIndex) != null) {
-                TableEntity entityT1 = getTableEntityFromFile(row,"T1", dateTimeIndex, t1Index, entityCounter, date);
-                TableEntity entityT2 = getTableEntityFromFile(row, "T2", dateTimeIndex, t2Index, entityCounter, date);
-                TableEntity entityT3 = getTableEntityFromFile(row, "T3", dateTimeIndex, t3Index, entityCounter, date);
-                TableEntity entityT4 = getTableEntityFromFile(row, "T4", dateTimeIndex, t4Index, entityCounter, date);
-                TableEntity entityT5 = getTableEntityFromFile(row, "T5", dateTimeIndex, t5Index, entityCounter, date);
-                TableEntity entityT6 = getTableEntityFromFile(row, "T6", dateTimeIndex, t6Index, entityCounter, date);
-                TableEntity entityT7 = getTableEntityFromFile(row, "T7", dateTimeIndex, t7Index, entityCounter, date);
-                TableEntity entityT8 = getTableEntityFromFile(row, "T8", dateTimeIndex, t8Index, entityCounter, date);
+                TableEntity entityT1 = getTableEntityFromFile(row,"1", dateTimeIndex, t1Index, entityCounter, date);
+                TableEntity entityT2 = getTableEntityFromFile(row, "2", dateTimeIndex, t2Index, entityCounter, date);
+                TableEntity entityT3 = getTableEntityFromFile(row, "3", dateTimeIndex, t3Index, entityCounter, date);
+                TableEntity entityT4 = getTableEntityFromFile(row, "4", dateTimeIndex, t4Index, entityCounter, date);
+                TableEntity entityT5 = getTableEntityFromFile(row, "5", dateTimeIndex, t5Index, entityCounter, date);
+                TableEntity entityT6 = getTableEntityFromFile(row, "6", dateTimeIndex, t6Index, entityCounter, date);
+                TableEntity entityT7 = getTableEntityFromFile(row, "7", dateTimeIndex, t7Index, entityCounter, date);
+                TableEntity entityT8 = getTableEntityFromFile(row, "8", dateTimeIndex, t8Index, entityCounter, date);
 
                 addTableEntity(tableView, entityT1, entityT2, entityT3, entityT4, entityT5, entityT6, entityT7, entityT8);
             }
@@ -124,7 +124,7 @@ public class ReadingFileService {
 
     //метод для получения сущности строки из файла Excel
     //принимает номер строки файла, имя канала, индексы колонок времени и канала
-    public TableEntity getTableEntityFromFile (Row row, String channelName, int timeIndex, int channelIndex, int entityCounter, Date initialMoment) {
+    public TableEntity getTableEntityFromFile (Row row, String channelName, int timeIndex, int channelIndex, Integer entityCounter, Date initialMoment) {
         //обязательно &&, иначе "падает" вторая проверка
         if (channelIndex > 0 && row.getCell(channelIndex) != null) {
             TableEntity tableEntity = new TableEntity(entityCounter,

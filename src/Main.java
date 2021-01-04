@@ -13,6 +13,7 @@ import javafx.collections.ObservableListBase;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.geometry.Side;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.chart.Chart;
@@ -48,7 +49,7 @@ import service.ReadingFileService;
 public class Main extends Application {
     //ВСПОМОГАТЕЛЬНЫЕ ПЕРЕМЕННЫЕ
     private TestDescription testDescription;                        //сущность-описание опыта
-    private int entityCounter = 1;                                  //счетчик строк в таблице
+    private Integer entityCounter = 1;                                  //счетчик строк в таблице
     private int channelsCounter = 0;                                //счетчик количества термопар
     private  ArrayList<String> owenChannels = new ArrayList<>();    //список печных термопар
     private ArrayList<String> sampleChannels = new ArrayList<>();   //список термопар на образце
@@ -155,12 +156,12 @@ public class Main extends Application {
         NumberAxis xOwenAxis = new NumberAxis();
         NumberAxis yOwenAxis = new NumberAxis();
         XYChart owenChart = new LineChart<Number, Number>(xOwenAxis, yOwenAxis);
+        //добавляем подписи осей
+        owenChart.getXAxis().setLabel("Время, мин");
+        owenChart.getYAxis().setLabel("Температура, ᵒС");
         owenChart.getStyleClass().add("owen-chart");
-        owenChartPane.add(owenChart,0,1,2,1);
-        chartService.createBorderLines(new TestDescription("1", new Date(), 20, 500, 150, "test"), owenChart);
-
-        //результат испытания
-        GridPane resultPane = new GridPane();
+        owenChartPane.addRow(0, owenChart);
+//        chartService.createBorderLines(new TestDescription("1", new Date(), 20, 500, 150, "test"), owenChart);
 
         chartPane.addRow(0, chartLabel);
         chartPane.addRow(1, owenChartPane);
@@ -195,7 +196,10 @@ public class Main extends Application {
                     System.out.println("Процесс открытия файла");
                     testDescription = new TestDescription();
                     try{
-                        readingFileService.getInformationFromFile(file, owenChart, tempTable, testDateValue, testNameValue, entityCounter, channelsCounter);
+                        readingFileService.getInformationFromFile(  file, owenChart,
+                                                                    tempTable, testDateValue, testNameValue,
+                                                                    entityCounter, channelsCounter);
+                        chartService.addLinesToChart(tempTable, owenChart);
                     } catch (IOException ex1) {
                         System.out.println("IO Exception while opening file");
                     } catch (InvalidFormatException ex2) {

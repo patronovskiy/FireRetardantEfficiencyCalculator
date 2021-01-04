@@ -1,5 +1,7 @@
 package domain;
 
+import java.util.Comparator;
+
 /**
  * @author patronovskiy
  * @link https://github.com/patronovskiy
@@ -53,4 +55,17 @@ public class TableEntity {
     public void setTemperature(double temperature) {
         this.temperature = temperature;
     }
+
+    //компаратор для сравнения и сортировки строк таблицы
+    public static Comparator<TableEntity> sortByMinutes = new Comparator<TableEntity>() {
+        @Override
+        public int compare(TableEntity o1, TableEntity o2) {
+            if(o1.getMinutes() < o2.getMinutes()) {
+                return -1;
+            } else if (o1.getMinutes() > o2.getMinutes()) {
+                return 1;
+            }
+            return 0;
+        }
+    };
 }
