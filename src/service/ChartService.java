@@ -17,6 +17,7 @@ import java.util.Comparator;
 //вспомогательный класс для отрисовки графика
 public class ChartService {
 
+    //запас по длине шкалы
     final int AXIS_LENGTH_RESERVE = 5;
 
     //метод для создания ограничивающих линий на графике для печных термопар
@@ -214,7 +215,7 @@ public class ChartService {
         series7.setName("7");
         series8.setName("8");
 
-        //запас шкалы 10 минут
+        //добавляем запас по длине шкалы
         maxTime+=AXIS_LENGTH_RESERVE;
         //начальная температура
         if(!isInitialTempStated) {
@@ -222,10 +223,68 @@ public class ChartService {
             initialTempValue.setText(String.valueOf(initialTemp));
         }
 
-
         //строим ограничительные линии для температуры в печи
         String owenChannels = owenChannelsValue.getText();
         createBorderLines(chart, initialTemp, tableView, owenChannels);
     }
 
+    //метод для отрисовки на графике линии для конкретного канала (термопары)
+    //код дублируется, чтобы читать все данные за 1 проход (мы знаем, что максимум 8 каналов)
+    public void calculateResult(TableView tableView, XYChart chart, TextField sampleChannelsValue, TextField resultValue) {
+
+        //проверяем, что введены номера термопар
+        if(sampleChannelsValue.getText().length() != 0) {
+            //создаем линию
+            XYChart.Series series = new XYChart.Series();
+            ObservableList datas = FXCollections.observableArrayList();
+
+            //переменные для расчета средней температуры
+            int averageTemp = 0;
+            int channelsCount = 0;
+            double currentTime = 0.0;
+            double result = 0;
+
+            //сортируем таблицу по времени измерения
+            ObservableList<TableEntity> sortedTableEntities = tableView.getItems().sorted(TableEntity.sortByMinutes);
+
+            //читаем данные из таблицы
+            for (Object entity : sortedTableEntities) {
+                TableEntity tableEntity = (TableEntity) entity;
+
+                if(sampleChannelsValue.getText().contains(tableEntity.getChannel())) {
+                    if (currentTime == tableEntity.getMinutes()) {
+                        averageTemp += tableEntity.getTemperature();
+                        channelsCount++;
+                    } else {
+                        //добавление на график среденей температуры в печи
+                        if (channelsCount != 0) {
+                            averageTemp = averageTemp / channelsCount;
+                            if (averageTemp >= 500.0) {
+                                result = currentTime;
+                                break;
+                            }
+                        }
+                        //сброс значений для следующей итерации
+                        averageTemp = 0;
+                        channelsCount=0;
+                        currentTime++;
+                        averageTemp += tableEntity.getTemperature();
+                        channelsCount++;
+                    }
+                }
+            }
+            //добавляем на график вертикальную линию
+            datas.add(new XYChart.Data(currentTime, 0));
+            datas.add(new XYChart.Data(currentTime, 700));
+            series.setData(datas);
+            series.setName("Результат испытания - " + result + " мин");
+            chart.getData().add(series);
+
+            //вписываем значение в таблицу
+            resultValue.setText(String.valueOf(result));
+
+        } else {
+            System.out.println("Не введены номера термопар на образце");
+        }
+    }
 }

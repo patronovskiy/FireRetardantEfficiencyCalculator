@@ -220,6 +220,8 @@ public class Main extends Application {
         };
         openMenuItem.setOnAction(onOpenFile);
 
+        //обработка событий на кнопках
+        //перестроение графика по введенным номерам термопар
         EventHandler<ActionEvent> onRebuildChart = new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -228,6 +230,17 @@ public class Main extends Application {
             }
         };
         rebuildChartButton.setOnAction(onRebuildChart);
+
+        //расчет результата по введенным номерам термопар
+        EventHandler<ActionEvent> onCalculateResult = new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                owenChart.getData().clear();
+                chartService.addLinesToChart(tempTable, owenChart, owenChannelsValue, initialTempValue);
+                chartService.calculateResult(tempTable, owenChart, sampleChannelsValue, resultValue);
+            }
+        };
+        calculateResultsButton.setOnAction(onCalculateResult);
     }
 
     //МЕТОДЫ
