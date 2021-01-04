@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="poi-excelant-4.1.2">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../../libraries/poi-4.1.2/poi-excelant-4.1.2.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

@@ -74,6 +74,10 @@
     -fx-pref-width: 180px;
 }
 
+.calculate-results-button {
+    -fx-pref-width: 750px;
+}
+
 
 
 

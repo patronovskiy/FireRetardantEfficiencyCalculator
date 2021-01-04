@@ -19,5 +19,7 @@
     <orderEntry type="library" name="curvesapi-1.061" level="project" />
     <orderEntry type="library" name="xmlbeans-3.1.0" level="project" />
     <orderEntry type="library" name="commons-compress-1.191" level="project" />
+    <orderEntry type="library" name="poi-excelant-4.1.2" level="project" />
+    <orderEntry type="library" name="commons-collections4-4.4" level="project" />
   </component>
 </module>

@@ -19,15 +19,7 @@ import javafx.scene.chart.Chart;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
-import javafx.scene.control.Label;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableRow;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
@@ -110,19 +102,26 @@ public class Main extends Application {
         TextField initialTempValue = new TextField("");
 
         Label criticalTemp = new Label("Критическая температура, ᵒС:");
-        TextField criticalTempValue = new TextField("");
-
-        Label scaleLength = new Label("Длина шкалы графика, мин:");
-        TextField scaleLengthValue = new TextField("");
+        TextField criticalTempValue = new TextField("500");
 
         Label notes = new Label("Примечания:");
         notes.setMaxHeight(Double.MAX_VALUE);
         TextArea notesValue = new TextArea(" ");
 
+        Label sampleChannels = new Label("Термопары на образце:");
+        TextField sampleChannelsValue = new TextField();
+
+        Label result = new Label("Результат испытания, мин:");
+        TextField resultValue = new TextField();
+
+        Button calculateResultsButton = new Button("Рассчитать результат");
+        calculateResultsButton.getStyleClass().add("calculate-results-button");
+
         infoTable.setGridLinesVisible(true);
-        infoTable.addColumn(0, testName, testDate, initialTemp, criticalTemp, scaleLength, notes);
+        infoTable.addColumn(0, testName, testDate, initialTemp, criticalTemp, notes, sampleChannels, result);
         infoTable.addColumn(1,
-            testNameValue, testDateValue, initialTempValue, criticalTempValue, scaleLengthValue, notesValue);
+            testNameValue, testDateValue, initialTempValue, criticalTempValue, notesValue, sampleChannelsValue, resultValue);
+        infoTable.add(calculateResultsButton, 0, 8, 2, 1);
 
         //компоновщик с таблицей температур
         GridPane tempTablePane = new GridPane();
@@ -133,7 +132,6 @@ public class Main extends Application {
         TableColumn<TableEntity, String> channel = new TableColumn<>("Канал");
         TableColumn<TableEntity, Double> minutes = new TableColumn<>("Время, мин");
         TableColumn<TableEntity, Double> temperature = new TableColumn<>("Температура, ᵒС");
-        //todo поменять структуру таблицы?
 
         //связывание полей таблицы со свойствами объекта TableEntity
         number.setCellValueFactory(new PropertyValueFactory<>("number"));
@@ -172,18 +170,14 @@ public class Main extends Application {
         sampleChartPane.getStyleClass().add("chart-wrapper");
         Label sampleLabel = new Label("Термопары на образце");
         sampleLabel.getStyleClass().add("chart-label");
-        Label sampleChannels = new Label("Каналы: ");
-        Label sampleChannelsValue = new Label();
+
         NumberAxis xSampleAxis = new NumberAxis();
         NumberAxis ySamplexis = new NumberAxis();
         XYChart sampleChart = new LineChart<Number, Number>(xSampleAxis, ySamplexis);
-        sampleChartPane.addRow(0, sampleLabel, sampleChannels, sampleChannelsValue);
-        sampleChartPane.add(sampleChart, 0, 1,2,1);
+
         //результат испытания
         GridPane resultPane = new GridPane();
-        Label result = new Label("Результат испытания, мин: ");
-        Label resultValue = new Label();
-        resultPane.addRow(0, result, resultValue);
+
         chartPane.addRow(0, chartLabel);
         chartPane.addRow(1, owenChartPane);
         chartPane.addRow(2, sampleChartPane);
