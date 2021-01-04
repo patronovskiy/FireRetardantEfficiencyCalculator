@@ -209,7 +209,7 @@ public class Main extends Application {
                         readingFileService.getInformationFromFile(  file, owenChart,
                                                                     tempTable, testDateValue, testNameValue,
                                                                     entityCounter, channelsCounter);
-                        chartService.addLinesToChart(tempTable, owenChart, owenChannelsValue);
+                        chartService.addLinesToChart(tempTable, owenChart, owenChannelsValue, initialTempValue);
                     } catch (IOException ex1) {
                         System.out.println("IO Exception while opening file");
                     } catch (InvalidFormatException ex2) {
@@ -219,6 +219,15 @@ public class Main extends Application {
             }
         };
         openMenuItem.setOnAction(onOpenFile);
+
+        EventHandler<ActionEvent> onRebuildChart = new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                owenChart.getData().clear();
+                chartService.addLinesToChart(tempTable, owenChart, owenChannelsValue, initialTempValue);
+            }
+        };
+        rebuildChartButton.setOnAction(onRebuildChart);
     }
 
     //МЕТОДЫ

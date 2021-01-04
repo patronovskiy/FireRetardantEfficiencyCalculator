@@ -112,7 +112,7 @@ public class ChartService {
 
     //метод для отрисовки на графике линии для конкретного канала (термопары)
     //код дублируется, чтобы читать все данные за 1 проход (мы знаем, что максимум 8 каналов)
-    public void addLinesToChart(TableView tableView, XYChart chart, TextField owenChannelsValue) {
+    public void addLinesToChart(TableView tableView, XYChart chart, TextField owenChannelsValue, TextField initialTempValue) {
 
         //создаем 8 линий
         XYChart.Series series1 = new XYChart.Series();
@@ -137,7 +137,16 @@ public class ChartService {
         double maxTime = 0;
         //переменные для определения исходной температуры
         double initialTemp = 0;
+        boolean isInitialTempStated = false;
         double initialTempsCount = 0;
+        //проверяем, указана ли начальная температура в таблице
+
+            try {
+                initialTemp = Double.parseDouble(initialTempValue.getText());
+                isInitialTempStated = true;
+            } catch (Exception ex) {
+                System.out.println("Неверно задана или не задана начальная температура");
+            }
 
         //читаем данные из таблицы
         for (Object entity : tableView.getItems()) {
@@ -149,8 +158,8 @@ public class ChartService {
             }
 
             //находим начальное значение температуры
-            if(tableEntity.getMinutes() == 0.0) {
-                initialTemp+=tableEntity.getMinutes();
+            if(!isInitialTempStated && tableEntity.getMinutes() == 0.0) {
+                initialTemp+=tableEntity.getTemperature();
                 initialTempsCount++;
             }
 
@@ -208,12 +217,15 @@ public class ChartService {
         //запас шкалы 10 минут
         maxTime+=AXIS_LENGTH_RESERVE;
         //начальная температура
-        initialTemp = initialTemp / initialTempsCount;
+        if(!isInitialTempStated) {
+            initialTemp = initialTemp / initialTempsCount;
+            initialTempValue.setText(String.valueOf(initialTemp));
+        }
+
+
         //строим ограничительные линии для температуры в печи
         String owenChannels = owenChannelsValue.getText();
-        createBorderLines(chart, maxTime, tableView, owenChannels);
+        createBorderLines(chart, initialTemp, tableView, owenChannels);
     }
-
-
 
 }
