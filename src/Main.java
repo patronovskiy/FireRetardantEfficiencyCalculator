@@ -54,6 +54,9 @@ public class Main extends Application {
     private  ArrayList<String> owenChannels = new ArrayList<>();    //список печных термопар
     private ArrayList<String> sampleChannels = new ArrayList<>();   //список термопар на образце
 
+    final String DEFAULT_SAMPLE_CHANNELS = "1,2,3";                 //номера термопар на образце по умолчанию
+    final String DEFAULT_OWEN_CHANNELS = "4,5,6,7,8";               //номера термопар в печи по умолчанию
+
     //объекты вспомогательных классов
     ChartService chartService = new ChartService();
     ReadingFileService readingFileService = new ReadingFileService();
@@ -106,20 +109,27 @@ public class Main extends Application {
         notes.setMaxHeight(Double.MAX_VALUE);
         TextArea notesValue = new TextArea(" ");
 
-        Label sampleChannels = new Label("Термопары на образце:");
-        TextField sampleChannelsValue = new TextField();
+        Label sampleChannels = new Label("№ термопар на образце:");
+        TextField sampleChannelsValue = new TextField(DEFAULT_SAMPLE_CHANNELS);
+
+        Label owenChannels = new Label("№ термопар в печи:");
+        TextField owenChannelsValue = new TextField(DEFAULT_OWEN_CHANNELS);
 
         Label result = new Label("Результат испытания, мин:");
         TextField resultValue = new TextField();
 
         Button calculateResultsButton = new Button("Рассчитать результат");
-        calculateResultsButton.getStyleClass().add("calculate-results-button");
+        calculateResultsButton.getStyleClass().add("tableview-button");
+
+        Button rebuildChartButton = new Button("Перестроить график");
+        rebuildChartButton.getStyleClass().add("tableview-button");
 
         infoTable.setGridLinesVisible(true);
-        infoTable.addColumn(0, testName, testDate, initialTemp, criticalTemp, notes, sampleChannels, result);
+        infoTable.addColumn(0, testName, testDate, initialTemp, criticalTemp, notes, sampleChannels, owenChannels, result);
         infoTable.addColumn(1,
-            testNameValue, testDateValue, initialTempValue, criticalTempValue, notesValue, sampleChannelsValue, resultValue);
-        infoTable.add(calculateResultsButton, 0, 8, 2, 1);
+            testNameValue, testDateValue, initialTempValue, criticalTempValue, notesValue, sampleChannelsValue, owenChannelsValue, resultValue);
+        infoTable.add(rebuildChartButton, 0, 8, 2, 1);
+        infoTable.add(calculateResultsButton, 0, 9, 2, 1);
 
         //компоновщик с таблицей температур
         GridPane tempTablePane = new GridPane();
@@ -199,7 +209,7 @@ public class Main extends Application {
                         readingFileService.getInformationFromFile(  file, owenChart,
                                                                     tempTable, testDateValue, testNameValue,
                                                                     entityCounter, channelsCounter);
-                        chartService.addLinesToChart(tempTable, owenChart);
+                        chartService.addLinesToChart(tempTable, owenChart, owenChannelsValue);
                     } catch (IOException ex1) {
                         System.out.println("IO Exception while opening file");
                     } catch (InvalidFormatException ex2) {
