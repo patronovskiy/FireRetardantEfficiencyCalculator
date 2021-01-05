@@ -1,22 +1,14 @@
 
 import java.io.File;
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
+
 import domain.TableEntity;
 import domain.TestDescription;
 import javafx.application.Application;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.collections.ObservableListBase;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Insets;
-import javafx.geometry.Side;
-import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.chart.Chart;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
@@ -24,21 +16,12 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.RowConstraints;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.openxml4j.opc.OPCPackage;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
-import org.apache.poi.xssf.extractor.XSSFExcelExtractor;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import service.ChartService;
 import service.ReadingFileService;
+import service.SavingFileService;
 
 /**
  * @author patronovskiy
@@ -60,6 +43,7 @@ public class Main extends Application {
     //объекты вспомогательных классов
     ChartService chartService = new ChartService();
     ReadingFileService readingFileService = new ReadingFileService();
+    SavingFileService savingFileService = new SavingFileService();
 
     //ГЛАВНЫЙ МЕТОД
     @Override
@@ -198,7 +182,7 @@ public class Main extends Application {
                 FileChooser fileChooser = new FileChooser();//Класс работы с диалогом выборки и сохранения
                 fileChooser.setTitle("Открыть документ");//Заголовок диалога
                 FileChooser.ExtensionFilter extFilter =
-                    new FileChooser.ExtensionFilter("Excel files (*.xlsx, *.xls)", "*.xlsx", "*.xls");//Расширение
+                    new FileChooser.ExtensionFilter("Excel files (*.xlsx)", "*.xlsx");//Расширение
                 fileChooser.getExtensionFilters().add(extFilter);
                 File file = fileChooser.showOpenDialog(primaryStage); //Указываем текущую сцену CodeNote.mainStage
                 if (file != null) {
@@ -214,11 +198,28 @@ public class Main extends Application {
                         System.out.println("IO Exception while opening file");
                     } catch (InvalidFormatException ex2) {
                         System.out.println("Invalid format exception while opening file");
+                    } catch (Exception ex) {
+                        System.out.println("Ошибка при чтении файла. Попробуйте открыть другой файл");
                     }
                 }
             }
         };
         openMenuItem.setOnAction(onOpenFile);
+
+        //сохранение отчета
+        EventHandler<ActionEvent> onSaveReport = new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                savingFileService.saveReport(   primaryStage,
+                                                testNameValue,
+                                                testDateValue,
+                                                notesValue,
+                                                sampleChannelsValue,
+                                                owenChannelsValue,
+                                                resultValue);
+            }
+        };
+        saveMenuItem.setOnAction(onSaveReport);
 
         //обработка событий на кнопках
         //перестроение графика по введенным номерам термопар
