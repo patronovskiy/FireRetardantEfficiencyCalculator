@@ -1,14 +1,11 @@
 package service;
 
-import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.WritableImage;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.apache.poi.openxml4j.opc.OPCPackage;
@@ -77,28 +74,20 @@ public class SavingFileService {
         cell5_1.setCellValue(owenChannelsValue.getText());
         cell6_1.setCellValue(resultValue.getText());
 
-<<<<<<< HEAD
         //устанавливаем ширину колонок по размеру содержимого
         sheet.autoSizeColumn(0);
         sheet.autoSizeColumn(1);
 
-=======
->>>>>>> 11338796b8e3e7424a6b0d6214017dc80ff0f962
         //сохранение графика как изображения
         SnapshotParameters snapshotParameters = new SnapshotParameters();
         WritableImage image = chart.snapshot(snapshotParameters, null);
         File imageFile = new File("image.png");
         try {
             ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png", imageFile);
-<<<<<<< HEAD
-=======
-
->>>>>>> 11338796b8e3e7424a6b0d6214017dc80ff0f962
         } catch (IOException e) {
             System.out.println("Ошибка при формировании снимка");
         }
         try {
-<<<<<<< HEAD
             //читаем сохраненный файл изображения и переводим в поток байт
             InputStream inputStream = new FileInputStream("image.png");
             byte[] bytes = IOUtils.toByteArray(inputStream);
@@ -117,28 +106,6 @@ public class SavingFileService {
             inputStream.close();
             //удаляем вспмогательный файл изображения
             imageFile.delete();
-=======
-            //FileInputStream obtains input bytes from the image file
-            InputStream inputStream = new FileInputStream("image.png");
-            //Get the contents of an InputStream as a byte[].
-            byte[] bytes = IOUtils.toByteArray(inputStream);
-            //Adds a picture to the workbook
-            int pictureIdx = workbook.addPicture(bytes, Workbook.PICTURE_TYPE_PNG);
-            //Returns an object that handles instantiating concrete classes
-            CreationHelper helper = workbook.getCreationHelper();
-            //Creates the top-level drawing patriarch.
-            Drawing drawing = sheet.createDrawingPatriarch();
-            //Create an anchor that is attached to the worksheet
-            ClientAnchor anchor = helper.createClientAnchor();
-            //set top-left corner for the image
-            anchor.setCol1(1);
-            anchor.setRow1(8);
-            //Creates a picture
-            Picture pict = drawing.createPicture(anchor, pictureIdx);
-            //Reset the image to the original size
-            pict.resize();
-            inputStream.close();
->>>>>>> 11338796b8e3e7424a6b0d6214017dc80ff0f962
         } catch (IOException ex) {
             System.out.println("Ошибка при сохранении графика" + ex);
         }
