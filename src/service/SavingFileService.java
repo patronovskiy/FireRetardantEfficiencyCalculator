@@ -1,19 +1,23 @@
 package service;
 
 import javafx.collections.ObservableList;
+import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.SnapshotParameters;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import javax.imageio.ImageIO;
+import java.io.*;
 
 //вспомогательный класс для сохранения файла отчета
 public class SavingFileService {
@@ -25,7 +29,8 @@ public class SavingFileService {
                                  TextArea notesValue,
                                  TextField sampleChannelsValue,
                                  TextField owenChannelsValue,
-                                 TextField resultValue) {
+                                 TextField resultValue,
+                                 XYChart chart) {
         //создаем книгу Excel
         OPCPackage pkg = OPCPackage.create(file);
         XSSFWorkbook workbook = new XSSFWorkbook();
@@ -43,7 +48,7 @@ public class SavingFileService {
         Row row7 = sheet.createRow(7);
         Row row8 = sheet.createRow(8);
 
-        //заполняем ячейки
+        //заполняем ячейки информацией из интерфейса
         Cell headerCell = headerRow.createCell(0, CellType.STRING);
         headerCell.setCellValue("Отчет об испытаниях");
         Cell cell1_0 = row1.createCell(0);
@@ -68,7 +73,6 @@ public class SavingFileService {
         cell4_0.setCellValue("№ термопар на образце:");
         cell5_0.setCellValue("№ термопар в печи:");
         cell6_0.setCellValue("Результат испытания, мин:");
-        cell8_0.setCellValue();
 
         cell1_1.setCellValue(testNameValue.getText());
         cell2_1.setCellValue(testDateValue.getText());
@@ -76,8 +80,41 @@ public class SavingFileService {
         cell4_1.setCellValue(sampleChannelsValue.getText());
         cell5_1.setCellValue(owenChannelsValue.getText());
         cell6_1.setCellValue(resultValue.getText());
-        cell8_1.setCellValue();
 
+        //сохранение графика как изображения
+        SnapshotParameters snapshotParameters = new SnapshotParameters();
+        WritableImage image = chart.snapshot(snapshotParameters, null);
+        File imageFile = new File("image.png");
+        try {
+            ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png", imageFile);
+
+        } catch (IOException e) {
+            System.out.println("Ошибка при формировании снимка");
+        }
+        try {
+            //FileInputStream obtains input bytes from the image file
+            InputStream inputStream = new FileInputStream("image.png");
+            //Get the contents of an InputStream as a byte[].
+            byte[] bytes = IOUtils.toByteArray(inputStream);
+            //Adds a picture to the workbook
+            int pictureIdx = workbook.addPicture(bytes, Workbook.PICTURE_TYPE_PNG);
+            //Returns an object that handles instantiating concrete classes
+            CreationHelper helper = workbook.getCreationHelper();
+            //Creates the top-level drawing patriarch.
+            Drawing drawing = sheet.createDrawingPatriarch();
+            //Create an anchor that is attached to the worksheet
+            ClientAnchor anchor = helper.createClientAnchor();
+            //set top-left corner for the image
+            anchor.setCol1(1);
+            anchor.setRow1(8);
+            //Creates a picture
+            Picture pict = drawing.createPicture(anchor, pictureIdx);
+            //Reset the image to the original size
+            pict.resize();
+            inputStream.close();
+        } catch (IOException ex) {
+            System.out.println("Ошибка при сохранении графика" + ex);
+        }
 
         return workbook;
     }
@@ -89,7 +126,8 @@ public class SavingFileService {
                            TextArea notesValue,
                            TextField sampleChannelsValue,
                            TextField owenChannelsValue,
-                           TextField resultValue) {
+                           TextField resultValue,
+                           XYChart chart) {
 
         //Класс работы с диалогом выборки и сохранения
         FileChooser fileChooser = new FileChooser();
@@ -110,7 +148,8 @@ public class SavingFileService {
                                                     notesValue,
                                                     sampleChannelsValue,
                                                     owenChannelsValue,
-                                                    resultValue);
+                                                    resultValue,
+                                                    chart);
                 try{
                     //запись файла
                     FileOutputStream outFile = new FileOutputStream(file);
