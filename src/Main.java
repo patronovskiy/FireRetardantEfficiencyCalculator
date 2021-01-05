@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import domain.TableEntity;
-import domain.TestDescription;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -31,14 +30,16 @@ import service.SavingFileService;
 //главный класс приложения с настройкой интерфейса и управлением логикой, событиями
 public class Main extends Application {
     //ВСПОМОГАТЕЛЬНЫЕ ПЕРЕМЕННЫЕ
-    private TestDescription testDescription;                        //сущность-описание опыта
-    private Integer entityCounter = 1;                                  //счетчик строк в таблице
+
+    private Integer entityCounter = 1;                              //счетчик строк в таблице
     private int channelsCounter = 0;                                //счетчик количества термопар
     private  ArrayList<String> owenChannels = new ArrayList<>();    //список печных термопар
     private ArrayList<String> sampleChannels = new ArrayList<>();   //список термопар на образце
 
     final String DEFAULT_SAMPLE_CHANNELS = "1,2,3";                 //номера термопар на образце по умолчанию
     final String DEFAULT_OWEN_CHANNELS = "4,5,6,7,8";               //номера термопар в печи по умолчанию
+
+    boolean isDataLoaded = false;                                   //флаг, отслеживающий загружена ли информация
 
     //объекты вспомогательных классов
     ChartService chartService = new ChartService();
@@ -188,11 +189,16 @@ public class Main extends Application {
                 if (file != null) {
                     //Открытие файла
                     System.out.println("Процесс открытия файла");
-                    testDescription = new TestDescription();
                     try{
+                        //удаление информации от предыдущих загруженных файлов
+                        owenChart.getData().clear();
+                        tempTable.getItems().clear();
+                        readingFileService.clearInfoTable(testDateValue, testNameValue, initialTempValue, resultValue);
+                        //загрузка новой информации из файла
                         readingFileService.getInformationFromFile(  file, owenChart,
                                                                     tempTable, testDateValue, testNameValue,
                                                                     entityCounter, channelsCounter);
+                        isDataLoaded = true;
                         chartService.addLinesToChart(tempTable, owenChart, owenChannelsValue, initialTempValue);
                     } catch (IOException ex1) {
                         System.out.println("IO Exception while opening file");
@@ -227,8 +233,10 @@ public class Main extends Application {
         EventHandler<ActionEvent> onRebuildChart = new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                owenChart.getData().clear();
-                chartService.addLinesToChart(tempTable, owenChart, owenChannelsValue, initialTempValue);
+                if(isDataLoaded) {
+                    owenChart.getData().clear();
+                    chartService.addLinesToChart(tempTable, owenChart, owenChannelsValue, initialTempValue);
+                }
             }
         };
         rebuildChartButton.setOnAction(onRebuildChart);
@@ -237,9 +245,11 @@ public class Main extends Application {
         EventHandler<ActionEvent> onCalculateResult = new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                owenChart.getData().clear();
-                chartService.addLinesToChart(tempTable, owenChart, owenChannelsValue, initialTempValue);
-                chartService.calculateResult(tempTable, owenChart, sampleChannelsValue, resultValue);
+                if(isDataLoaded) {
+                    owenChart.getData().clear();
+                    chartService.addLinesToChart(tempTable, owenChart, owenChannelsValue, initialTempValue);
+                    chartService.calculateResult(tempTable, owenChart, sampleChannelsValue, resultValue);
+                }
             }
         };
         calculateResultsButton.setOnAction(onCalculateResult);

@@ -105,7 +105,6 @@ public class ReadingFileService {
 
         //добавляем в таблицу строки из файла для каждого канала
         for (Row row : sheet) {
-            System.out.println(row.getRowNum());
             if (row.getRowNum() >= 1 & row.getCell(dateTimeIndex) != null) {
                 TableEntity entityT1 = getTableEntityFromFile(row,"1", dateTimeIndex, t1Index, entityCounter, date);
                 TableEntity entityT2 = getTableEntityFromFile(row, "2", dateTimeIndex, t2Index, entityCounter, date);
@@ -146,6 +145,16 @@ public class ReadingFileService {
                 tableView.getItems().add(tableEntity);
             }
         }
+    }
+
+    public void clearInfoTable(TextField testDateValue,
+                               TextField testNameValue,
+                               TextField initialTempValue,
+                               TextField resultValue) {
+        testDateValue.clear();
+        testNameValue.clear();
+        initialTempValue.clear();
+        resultValue.clear();
     }
 
 }
