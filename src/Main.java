@@ -216,7 +216,8 @@ public class Main extends Application {
                                                 notesValue,
                                                 sampleChannelsValue,
                                                 owenChannelsValue,
-                                                resultValue);
+                                                resultValue,
+                                                owenChart);
             }
         };
         saveMenuItem.setOnAction(onSaveReport);
