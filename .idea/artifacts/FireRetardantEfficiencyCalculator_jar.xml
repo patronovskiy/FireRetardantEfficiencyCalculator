@@ -1,0 +1,17 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="FireRetardantEfficiencyCalculator:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/FireRetardantEfficiencyCalculator_jar</output-path>
+    <root id="archive" name="FireRetardantEfficiencyCalculator.jar">
+      <element id="module-output" name="FireRetardantEfficiencyCalculator" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../../libraries/poi-4.1.2/poi-ooxml-schemas-4.1.2.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../../libraries/poi-4.1.2/lib/commons-collections4-4.4.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../../libraries/poi-4.1.2/lib/commons-compress-1.19.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../../libraries/poi-4.1.2/poi-ooxml-4.1.2.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../../libraries/poi-4.1.2/poi-excelant-4.1.2.jar" path-in-jar="/" />
+      <element id="library" level="project" name="activation-1.1.1" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../../libraries/poi-4.1.2/ooxml-lib/xmlbeans-3.1.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../../libraries/poi-4.1.2/ooxml-lib/curvesapi-1.06.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../../libraries/poi-4.1.2/poi-4.1.2.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>

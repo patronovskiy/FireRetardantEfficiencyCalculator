@@ -3,6 +3,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import domain.EntityCounter;
 import domain.TableEntity;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
@@ -31,7 +32,7 @@ import service.SavingFileService;
 public class Main extends Application {
     //ВСПОМОГАТЕЛЬНЫЕ ПЕРЕМЕННЫЕ
 
-    private Integer entityCounter = 1;                              //счетчик строк в таблице
+    private EntityCounter entityCounter = new EntityCounter();      //счетчик строк в таблице
     private int channelsCounter = 0;                                //счетчик количества термопар
     private  ArrayList<String> owenChannels = new ArrayList<>();    //список печных термопар
     private ArrayList<String> sampleChannels = new ArrayList<>();   //список термопар на образце
@@ -193,6 +194,7 @@ public class Main extends Application {
                         //удаление информации от предыдущих загруженных файлов
                         owenChart.getData().clear();
                         tempTable.getItems().clear();
+                        entityCounter.clear();
                         readingFileService.clearInfoTable(testDateValue, testNameValue, initialTempValue, resultValue);
                         //загрузка новой информации из файла
                         readingFileService.getInformationFromFile(  file, owenChart,

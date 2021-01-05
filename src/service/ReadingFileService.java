@@ -1,5 +1,6 @@
 package service;
 
+import domain.EntityCounter;
 import domain.TableEntity;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.TableView;
@@ -26,7 +27,7 @@ public class ReadingFileService {
     //todo рефакторинг - очень длинный метод
     public void getInformationFromFile(File file, XYChart chart, TableView tableView,
                                        TextField testDateValue, TextField testNameValue,
-                                       int entityCounter, int channelsCounter)
+                                       EntityCounter entityCounter, int channelsCounter)
             throws IOException, InvalidFormatException {
 
         //открываем книгу Excel
@@ -123,14 +124,14 @@ public class ReadingFileService {
 
     //метод для получения сущности строки из файла Excel
     //принимает номер строки файла, имя канала, индексы колонок времени и канала
-    public TableEntity getTableEntityFromFile (Row row, String channelName, int timeIndex, int channelIndex, Integer entityCounter, Date initialMoment) {
+    public TableEntity getTableEntityFromFile (Row row, String channelName, int timeIndex, int channelIndex, EntityCounter entityCounter, Date initialMoment) {
         //обязательно &&, иначе "падает" вторая проверка
+        int EntityCounter = 1;
         if (channelIndex > 0 && row.getCell(channelIndex) != null) {
-            TableEntity tableEntity = new TableEntity(entityCounter,
+            TableEntity tableEntity = new TableEntity(entityCounter.getAndIncrementCounter(),
                     channelName,
                     (row.getCell(timeIndex).getDateCellValue().getTime() - initialMoment.getTime())/60000,
                     (Math.round(row.getCell(channelIndex).getNumericCellValue()*10))/10.0);
-            entityCounter++;
             return tableEntity;
         } else {
             return null;
