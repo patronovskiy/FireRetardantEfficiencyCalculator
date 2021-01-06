@@ -7,7 +7,7 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 
-//вспомогательный класс для отрисовки графика
+//вспомогательный класс для работы с графиком
 public class ChartService {
 
     //метод для создания ограничивающих линий на графике для печных термопар

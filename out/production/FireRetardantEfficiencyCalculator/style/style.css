@@ -54,6 +54,7 @@
 /*компоновщик с графиком и вложенная обертка графика*/
 .chart-pane > .chart-wrapper {
     -fx-padding: 10px;
+    -fx-background-color: red;
 }
 
 /*график*/

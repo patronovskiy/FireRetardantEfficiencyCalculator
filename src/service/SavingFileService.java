@@ -6,6 +6,7 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.WritableImage;
+import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.apache.poi.ss.usermodel.*;
@@ -25,7 +26,7 @@ public class SavingFileService {
                                  TextField sampleChannelsValue,
                                  TextField owenChannelsValue,
                                  TextField resultValue,
-                                 XYChart chart) {
+                                 GridPane chartPane) {
         //создаем книгу Excel
         XSSFWorkbook workbook = new XSSFWorkbook();
         //создаем первый лист книги
@@ -77,7 +78,7 @@ public class SavingFileService {
 
         //сохранение графика как изображения
         SnapshotParameters snapshotParameters = new SnapshotParameters();
-        WritableImage image = chart.snapshot(snapshotParameters, null);
+        WritableImage image = chartPane.snapshot(snapshotParameters, null);
         File imageFile = new File("image.png");
         try {
             ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png", imageFile);
@@ -117,7 +118,7 @@ public class SavingFileService {
                            TextField sampleChannelsValue,
                            TextField owenChannelsValue,
                            TextField resultValue,
-                           XYChart chart) {
+                           GridPane chartPane) {
 
         //Класс работы с диалогом выборки и сохранения
         FileChooser fileChooser = new FileChooser();
@@ -138,7 +139,7 @@ public class SavingFileService {
                                                     sampleChannelsValue,
                                                     owenChannelsValue,
                                                     resultValue,
-                                                    chart);
+                                                    chartPane);
                 try{
                     //запись файла
                     FileOutputStream outFile = new FileOutputStream(file);

@@ -44,7 +44,7 @@ public class Main extends Application {
     ReadingFileService readingFileService = new ReadingFileService();
     SavingFileService savingFileService = new SavingFileService();
 
-    //ГЛАВНЫЙ МЕТОД
+    //ГЛАВНЫЙ МЕТОД ПРОГРАММЫ, СОЗДАЮЩИЙ ПРИЛОЖЕНИЕ
     @Override
     public void start(Stage primaryStage) throws Exception {
         //настройка компоновщика
@@ -139,7 +139,7 @@ public class Main extends Application {
         //компоновщик с графиками
         GridPane chartPane = new GridPane();
         chartPane.getStyleClass().add("chart-pane");
-        Label chartLabel = new Label("Графики зависимости температуры от времени");
+        TextField chartLabel = new TextField("Графики зависимости температуры от времени");
         chartLabel.getStyleClass().addAll("chart-label", "main-chart-label");
 
         //график температур с термопар
@@ -224,7 +224,7 @@ public class Main extends Application {
                                                 sampleChannelsValue,
                                                 owenChannelsValue,
                                                 resultValue,
-                                                owenChart);
+                                                chartPane);
             }
         };
         //назначаем обработчик кнопке "сохранить"
@@ -257,11 +257,6 @@ public class Main extends Application {
         };
         //назначаем обработчик кнопке "рассчитать результат"
         calculateResultsButton.setOnAction(onCalculateResult);
-    }
-
-    //МЕТОДЫ
-    //метод инициализации
-    public void init() {
     }
 
     //точка входа в приложение
