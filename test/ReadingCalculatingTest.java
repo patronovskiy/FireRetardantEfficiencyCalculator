@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.io.File;
 
 //тестовое приложение для проверки методов чтения файла и расчета результата
-public class MainTest extends Application {
+public class ReadingCalculatingTest extends Application {
 
     //переменная, хранящая результат испытания
     private static Double result = 0D;
