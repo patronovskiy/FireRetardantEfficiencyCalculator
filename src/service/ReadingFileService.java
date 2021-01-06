@@ -24,8 +24,7 @@ public class ReadingFileService {
     //предполагем, что структура генерируемого файла всегда одна и та же:
     //всегда используется первый лист книги Excel,
     // заголовок - первая строка, в заголовке указаны date, time, номер канала в формате T1, T2...
-    //todo рефакторинг - очень длинный метод
-    public void getInformationFromFile(File file, XYChart chart, TableView tableView,
+    public void getInformationFromFile(File file, TableView tableView,
                                        TextField testDateValue, TextField testNameValue,
                                        EntityCounter entityCounter, int channelsCounter)
             throws IOException, InvalidFormatException {
@@ -38,6 +37,7 @@ public class ReadingFileService {
         Sheet sheet = workbook.getSheetAt(0);
 
         //определяем номера столбцов с нужной информацией
+        //изначально задаем отрицательное значение для отсутвующих столбцов
         int dateTimeIndex = -1;
         //максимальное число каналов - 8 (3 термопары на образце, 5  - в печи)
         int t1Index = -1;
@@ -49,8 +49,8 @@ public class ReadingFileService {
         int t7Index = -1;
         int t8Index = -1;
 
+        //ищем в первой строке названия столбцов и устанавливаем номера столбцов
         Row headerRow = sheet.getRow(0);
-        //TODO обработать NullPointerException если канала не существует
         for (Cell cell : headerRow) {
             if (cell.getStringCellValue().toLowerCase().contains("datetime")) {
                 dateTimeIndex = cell.getColumnIndex();
@@ -148,6 +148,7 @@ public class ReadingFileService {
         }
     }
 
+    //метод для очистки информации из таблицы после загрузки файла
     public void clearInfoTable(TextField testDateValue,
                                TextField testNameValue,
                                TextField initialTempValue,
@@ -157,5 +158,4 @@ public class ReadingFileService {
         initialTempValue.clear();
         resultValue.clear();
     }
-
 }

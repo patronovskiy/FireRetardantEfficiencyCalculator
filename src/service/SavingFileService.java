@@ -8,7 +8,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.WritableImage;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -20,8 +19,7 @@ import java.io.*;
 public class SavingFileService {
 
     //метод для создания отчета
-    public Workbook createReport(File file,
-                                 TextField testNameValue,
+    public Workbook createReport(TextField testNameValue,
                                  TextField testDateValue,
                                  TextArea notesValue,
                                  TextField sampleChannelsValue,
@@ -29,7 +27,6 @@ public class SavingFileService {
                                  TextField resultValue,
                                  XYChart chart) {
         //создаем книгу Excel
-        OPCPackage pkg = OPCPackage.create(file);
         XSSFWorkbook workbook = new XSSFWorkbook();
         //создаем первый лист книги
         Sheet sheet = workbook.createSheet("Отчет об испытаниях");
@@ -109,7 +106,6 @@ public class SavingFileService {
         } catch (IOException ex) {
             System.out.println("Ошибка при сохранении графика" + ex);
         }
-
         return workbook;
     }
 
@@ -136,8 +132,7 @@ public class SavingFileService {
         if (file != null) {
             //создем отчет
             try{
-                Workbook workbook = createReport(   file,
-                                                    testNameValue,
+                Workbook workbook = createReport(   testNameValue,
                                                     testDateValue,
                                                     notesValue,
                                                     sampleChannelsValue,
@@ -159,7 +154,5 @@ public class SavingFileService {
                 System.out.println("Ошибка при создании отчета");
             }
         }
-
     }
-
 }

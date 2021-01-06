@@ -1,7 +1,6 @@
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 
 import domain.EntityCounter;
 import domain.TableEntity;
@@ -30,12 +29,10 @@ import service.SavingFileService;
 
 //главный класс приложения с настройкой интерфейса и управлением логикой, событиями
 public class Main extends Application {
-    //ВСПОМОГАТЕЛЬНЫЕ ПЕРЕМЕННЫЕ
 
+    //ВСПОМОГАТЕЛЬНЫЕ ПЕРЕМЕННЫЕ
     private EntityCounter entityCounter = new EntityCounter();      //счетчик строк в таблице
     private int channelsCounter = 0;                                //счетчик количества термопар
-    private  ArrayList<String> owenChannels = new ArrayList<>();    //список печных термопар
-    private ArrayList<String> sampleChannels = new ArrayList<>();   //список термопар на образце
 
     final String DEFAULT_SAMPLE_CHANNELS = "1,2,3";                 //номера термопар на образце по умолчанию
     final String DEFAULT_OWEN_CHANNELS = "4,5,6,7,8";               //номера термопар в печи по умолчанию
@@ -52,7 +49,6 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception {
         //настройка компоновщика
         //корневой компоновщик
-        //todo рефакторинг - вынести настройку компонентов в отдельные метдоды
         GridPane root = new GridPane();
 
         //МЕНЮ
@@ -157,7 +153,6 @@ public class Main extends Application {
         owenChart.getYAxis().setLabel("Температура, ᵒС");
         owenChart.getStyleClass().add("owen-chart");
         owenChartPane.addRow(0, owenChart);
-//        chartService.createBorderLines(new TestDescription("1", new Date(), 20, 500, 150, "test"), owenChart);
 
         chartPane.addRow(0, chartLabel);
         chartPane.addRow(1, owenChartPane);
@@ -181,25 +176,28 @@ public class Main extends Application {
         EventHandler<ActionEvent> onOpenFile = new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                FileChooser fileChooser = new FileChooser();//Класс работы с диалогом выборки и сохранения
-                fileChooser.setTitle("Открыть документ");//Заголовок диалога
+                //Класс работы с диалогом выборки и сохранения
+                FileChooser fileChooser = new FileChooser();
+                //Заголовок диалога
+                fileChooser.setTitle("Открыть документ");
                 FileChooser.ExtensionFilter extFilter =
                     new FileChooser.ExtensionFilter("Excel files (*.xlsx)", "*.xlsx");//Расширение
                 fileChooser.getExtensionFilters().add(extFilter);
-                File file = fileChooser.showOpenDialog(primaryStage); //Указываем текущую сцену CodeNote.mainStage
+                File file = fileChooser.showOpenDialog(primaryStage); //Указываем текущую сцену
                 if (file != null) {
                     //Открытие файла
                     System.out.println("Процесс открытия файла");
                     try{
-                        //удаление информации от предыдущих загруженных файлов
+                        //удаление информации после предыдущих загруженных файлов
                         owenChart.getData().clear();
                         tempTable.getItems().clear();
                         entityCounter.clear();
                         readingFileService.clearInfoTable(testDateValue, testNameValue, initialTempValue, resultValue);
                         //загрузка новой информации из файла
-                        readingFileService.getInformationFromFile(  file, owenChart,
+                        readingFileService.getInformationFromFile(  file,
                                                                     tempTable, testDateValue, testNameValue,
                                                                     entityCounter, channelsCounter);
+                        //устанавливаем флаг "информация загружена"
                         isDataLoaded = true;
                         chartService.addLinesToChart(tempTable, owenChart, owenChannelsValue, initialTempValue);
                     } catch (IOException ex1) {
@@ -212,6 +210,7 @@ public class Main extends Application {
                 }
             }
         };
+        //назначаем обработчик кнопке "открыть"
         openMenuItem.setOnAction(onOpenFile);
 
         //сохранение отчета
@@ -228,6 +227,7 @@ public class Main extends Application {
                                                 owenChart);
             }
         };
+        //назначаем обработчик кнопке "сохранить"
         saveMenuItem.setOnAction(onSaveReport);
 
         //обработка событий на кнопках
@@ -241,6 +241,7 @@ public class Main extends Application {
                 }
             }
         };
+        //назначаем обработчик кнопке "перестроить график"
         rebuildChartButton.setOnAction(onRebuildChart);
 
         //расчет результата по введенным номерам термопар
@@ -254,17 +255,17 @@ public class Main extends Application {
                 }
             }
         };
+        //назначаем обработчик кнопке "рассчитать результат"
         calculateResultsButton.setOnAction(onCalculateResult);
     }
 
     //МЕТОДЫ
-
+    //метод инициализации
     public void init() {
     }
 
+    //точка входа в приложение
     public static void main(String[] args) {
         launch(args);
     }
-
-
 }

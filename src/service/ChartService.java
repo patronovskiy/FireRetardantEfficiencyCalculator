@@ -1,24 +1,14 @@
 package service;
 
-import com.sun.javafx.charts.Legend;
-import com.sun.xml.internal.ws.api.model.wsdl.WSDLOutput;
 import domain.TableEntity;
-import domain.TestDescription;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.geometry.Side;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import org.apache.poi.ss.formula.functions.T;
-
-import java.util.Comparator;
 
 //вспомогательный класс для отрисовки графика
 public class ChartService {
-
-    //запас по длине шкалы
-    final int AXIS_LENGTH_RESERVE = 5;
 
     //метод для создания ограничивающих линий на графике для печных термопар
     //эти линии ограничивают допустимые значения температуры в печи по ГОСТ
@@ -135,14 +125,11 @@ public class ChartService {
             ObservableList datas7 = FXCollections.observableArrayList();
             ObservableList datas8 = FXCollections.observableArrayList();
 
-            //переменная для хранения максимального времени (для опред. длины шкалы Х)
-            double maxTime = 0;
             //переменные для определения исходной температуры
             double initialTemp = 0;
             boolean isInitialTempStated = false;
             double initialTempsCount = 0;
             //проверяем, указана ли начальная температура в таблице
-
             try {
                 initialTemp = Double.parseDouble(initialTempValue.getText());
                 isInitialTempStated = true;
@@ -153,11 +140,6 @@ public class ChartService {
             //читаем данные из таблицы
             for (Object entity : tableView.getItems()) {
                 TableEntity tableEntity = (TableEntity) entity;
-
-                //находим длину шкалы (максимальное время)
-                if (tableEntity.getMinutes() > maxTime) {
-                    maxTime = tableEntity.getMinutes();
-                }
 
                 //находим начальное значение температуры
                 if(!isInitialTempStated && tableEntity.getMinutes() == 0.0) {
@@ -203,7 +185,6 @@ public class ChartService {
             series6.setData(datas6);
             series7.setData(datas7);
             series8.setData(datas8);
-
             chart.getData().addAll(series1, series2, series3, series4, series5, series6, series7, series8);
 
             //добавляем легенду
@@ -216,8 +197,6 @@ public class ChartService {
             series7.setName("7");
             series8.setName("8");
 
-            //добавляем запас по длине шкалы
-            maxTime+=AXIS_LENGTH_RESERVE;
             //начальная температура
             if(!isInitialTempStated) {
                 initialTemp = initialTemp / initialTempsCount;
