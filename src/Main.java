@@ -1,6 +1,7 @@
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 
 import domain.EntityCounter;
 import domain.TableEntity;
@@ -15,6 +16,8 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -57,8 +60,10 @@ public class Main extends Application {
         Menu fileMenu = new Menu("Файл");
         MenuItem openMenuItem = new MenuItem("Открыть файл");
         MenuItem saveMenuItem = new MenuItem("Сохранить отчет");
-        Menu helpMenu = new Menu("Справка");
         fileMenu.getItems().addAll(openMenuItem, saveMenuItem);
+        Menu helpMenu = new Menu("Справка");
+        MenuItem helpMenuItem = new MenuItem("Показать справку");
+        helpMenu.getItems().add(helpMenuItem);
         mainMenuBar.getMenus().addAll(fileMenu, helpMenu);
         root.add(mainMenuBar, 0, 0, 2,1);
 
@@ -257,6 +262,38 @@ public class Main extends Application {
         };
         //назначаем обработчик кнопке "рассчитать результат"
         calculateResultsButton.setOnAction(onCalculateResult);
+
+        //открытие справки
+        EventHandler<ActionEvent> onHelp = new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                System.out.println("Загружается справка");
+                //создаем компоновщик
+                GridPane helpPane = new GridPane();
+                //справку загружаем в "браузер" как веб-страницу
+                //создаем браузер
+                WebView helpWebView = new WebView();
+                WebEngine helpWebEngine = helpWebView.getEngine();
+                //загружаем страницу
+                try{
+                    File file = new File("src/resource/help.html");
+                    URL url= file.toURI().toURL();
+                    helpWebEngine.load(url.toString());
+                } catch (Exception ex) {
+                    System.out.println("Ошибка при открытиии файла справки" + ex);
+                }
+                //добавляем браузер в компоновщик
+                helpPane.getChildren().add(helpWebView);
+                //создаем и показываем окно
+                Scene helpScene = new Scene(helpPane);
+                Stage helpStage = new Stage();
+                helpStage.setScene(helpScene);
+                helpStage.setTitle("Справка");
+                helpStage.show();
+            }
+        };
+        //назначаем обработчик кнопке "Вызвать справку"
+        helpMenuItem.setOnAction(onHelp);
     }
 
     //точка входа в приложение
