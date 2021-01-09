@@ -2,7 +2,6 @@ package service;
 
 import domain.EntityCounter;
 import domain.TableEntity;
-import javafx.scene.chart.XYChart;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -123,8 +122,11 @@ public class ReadingFileService {
     }
 
     //метод для получения сущности строки из файла Excel
-    //принимает номер строки файла, имя канала, индексы колонок времени и канала
-    public TableEntity getTableEntityFromFile (Row row, String channelName, int timeIndex, int channelIndex, EntityCounter entityCounter, Date initialMoment) {
+    //принимает номер строки файла, имя канала, индексы колонок времени и канала,
+    // счетчик строк таблицы, начальный момент времени
+    public TableEntity getTableEntityFromFile (Row row, String channelName,
+                                               int timeIndex, int channelIndex,
+                                               EntityCounter entityCounter, Date initialMoment) {
         //обязательно &&, иначе "падает" вторая проверка
         int EntityCounter = 1;
         if (channelIndex > 0 && row.getCell(channelIndex) != null) {

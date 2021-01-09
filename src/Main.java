@@ -215,7 +215,7 @@ public class Main extends Application {
                 }
             }
         };
-        //назначаем обработчик кнопке "открыть"
+        //назначаем обработчик пункту меню "Открыть файл"
         openMenuItem.setOnAction(onOpenFile);
 
         //сохранение отчета
@@ -232,7 +232,7 @@ public class Main extends Application {
                                                 chartPane);
             }
         };
-        //назначаем обработчик кнопке "сохранить"
+        //назначаем обработчик пункту меню "Сохранить отчет"
         saveMenuItem.setOnAction(onSaveReport);
 
         //обработка событий на кнопках
@@ -292,7 +292,7 @@ public class Main extends Application {
                 helpStage.show();
             }
         };
-        //назначаем обработчик кнопке "Вызвать справку"
+        //назначаем обработчик пункту меню "Показать справку"
         helpMenuItem.setOnAction(onHelp);
     }
 
